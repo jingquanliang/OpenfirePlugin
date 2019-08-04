@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <!-- Main plugin class for  回执消息 -->
+    <!--<class>ru.own.www.smack.ReceiptPlugin</class>-->
+    <!--<name>ReceiptPlugin</name>-->
+
+    <!-- Main plugin class for  保存聊天消息 -->
+    <class>com.qiuzhping.openfire.plugin.ChatLogsPlugin</class>
+    <name>chatSavePlugin</name>
+
+
+    <description>save the call log for users</description>
+    <author>Jing QuanLiang</author>
+    <version>1.0.0</version>
+    <date>2/8/2019</date>
+    <url>http://localhost:9090/openfire/plugins.jsp</url>
+    <minServerVersion>3.9.1</minServerVersion>
+    <licenseType>gpl</licenseType>
+
+</plugin>
