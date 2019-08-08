@@ -152,7 +152,10 @@ public class ChatLogsInterceptor implements PacketInterceptor {
 		logs.setContent(message.getBody());
 		logs.setCreateDate(new Timestamp(new Date().getTime()));
 		logs.setDetail(message.toXML());
-		logs.setLength(logs.getContent().length());
+		if(message.getBody()!=null && !message.getBody().equals(""))
+			logs.setLength(message.getBody().length());
+		else
+			logs.setLength(0);
 		logs.setState(0);
 		logs.setSessionJID(jid.toString());
 		// 生成主键id，利用序列生成器
