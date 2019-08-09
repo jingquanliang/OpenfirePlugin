@@ -155,7 +155,7 @@ public class ChatLogsInterceptor implements PacketInterceptor {
 		if(message.getBody()!=null && !message.getBody().equals(""))
 			logs.setLength(message.getBody().length());
 		else
-			logs.setLength(0);
+			return null; //没有内容就不保存了
 		logs.setState(0);
 		logs.setSessionJID(jid.toString());
 		// 生成主键id，利用序列生成器
