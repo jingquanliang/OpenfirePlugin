@@ -138,42 +138,48 @@ public class ChatLogsInterceptor implements PacketInterceptor {
 		/*if (packet == null || !incoming) {
 			return null;
 		}*/
-		Message message = (Message) packet;
-		ChatLogs logs = new ChatLogs();
-		JID jid = session.getAddress();
-		logs.setSender(jid.getNode());
-		JID recipient = message.getTo();
-		logs.setReceiver(recipient.getNode());
-		//自己发送的信息不用保存.
-		if (logs.getSender() != null && logs.getReceiver() != null
-				&& logs.getSender().equalsIgnoreCase(logs.getReceiver())) {
+		try{
+			Message message = (Message) packet;
+			ChatLogs logs = new ChatLogs();
+			JID jid = session.getAddress();
+			logs.setSender(jid.getNode());
+			JID recipient = message.getTo();
+			logs.setReceiver(recipient.getNode());
+			//自己发送的信息不用保存.
+			if (logs.getSender() != null && logs.getReceiver() != null
+					&& logs.getSender().equalsIgnoreCase(logs.getReceiver())) {
+				return null;
+			}
+			logs.setContent(message.getBody());
+			logs.setCreateDate(new Timestamp(new Date().getTime()));
+			logs.setDetail(message.toXML());
+			if(message.getBody()!=null && !message.getBody().equals(""))
+				logs.setLength(message.getBody().length());
+			else
+				return null; //没有内容就不保存了
+			logs.setState(0);
+			logs.setSessionJID(jid.toString());
+			// 生成主键id，利用序列生成器
+			long messageID = SequenceManager.nextID(ChatLogsConstants.CHAT_LOGS);
+			logs.setMessageId(messageID);
+			//解析body.json
+			//messageType: 聊天记录类型
+			//bodyContext:聊天记录内容
+			System.out.println("解析ParseBody聊天body Start=====================");
+			System.out.println("message.getBody():" + message.getBody());
+			Map<String, String> body = parseBody(message.getBody());
+			if (body != null) {
+				System.out.println("解析body.json");
+				logs.setMessageType(body.get(MESSAGE_TYPE));
+				logs.setContent(body.get(BODY_CONTEXT));
+			}
+			System.out.println("解析ParseBody聊天body End=====================");
+			return logs;
+		}catch (Exception e){
+			System.out.println("解析ParseBody是出错=====================");
 			return null;
 		}
-		logs.setContent(message.getBody());
-		logs.setCreateDate(new Timestamp(new Date().getTime()));
-		logs.setDetail(message.toXML());
-		if(message.getBody()!=null && !message.getBody().equals(""))
-			logs.setLength(message.getBody().length());
-		else
-			return null; //没有内容就不保存了
-		logs.setState(0);
-		logs.setSessionJID(jid.toString());
-		// 生成主键id，利用序列生成器
-		long messageID = SequenceManager.nextID(ChatLogsConstants.CHAT_LOGS);
-		logs.setMessageId(messageID);
-		//解析body.json
-		//messageType: 聊天记录类型
-		//bodyContext:聊天记录内容
-		System.out.println("解析ParseBody聊天body Start=====================");
-		System.out.println("message.getBody():" + message.getBody());
-		Map<String, String> body = parseBody(message.getBody());
-		if (body != null) {
-			System.out.println("解析body.json");
-			logs.setMessageType(body.get(MESSAGE_TYPE));
-			logs.setContent(body.get(BODY_CONTEXT));
-		}
-		System.out.println("解析ParseBody聊天body End=====================");
-		return logs;
+
 	}
 
 	/** <Description functions in a word>
